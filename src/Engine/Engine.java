@@ -1,9 +1,15 @@
 package Engine;
 
 public class Engine implements intEngine {
-	static final int craftExp = 4;
-	static final int magicExp = 83;
-
+	public static final int craftExp = 4;
+	public static final int magicExp = 83;
+	
+	public static final int STRUNG = 0;
+	public static final int UNSTRUNG = 1;
+	public static final int ASTRAL = 2;
+	public static final int CASTS = 3;
+	
+	
 	private int strung;
 	private int unStrung;
 	private int astral;
@@ -59,21 +65,15 @@ public class Engine implements intEngine {
 
 
 	@Override
-	public int[] supplyValues() {
-		int strung = 0;
-		int unstrung = 1;
-		int astral = 2;
-		int plannedCasts = 3;
+	public int[] supplyValues() {	
+		int providedValues[] = new int[4];
 		
-		
-		int allValues[] = new int[4];
-		
-		allValues[strung] = 90;//getStrung();
-		allValues[unstrung] = 130;//getUnStrung();
-		allValues[astral] = 200;//getAstral();
-		allValues[plannedCasts] = 27;//getPlannedCasts();
-		setValues(allValues);
-		setPlannedCasts(allValues[plannedCasts]);
+		providedValues[STRUNG] = 90;//getStrung();
+		providedValues[UNSTRUNG] = 130;//getUnStrung();
+		providedValues[ASTRAL] = 200;//getAstral();
+		providedValues[CASTS] = 27;//getPlannedCasts() from SWING;
+		setValues(providedValues);
+		setPlannedCasts(providedValues[CASTS]);
 		return getValues();
 	}
 
@@ -84,12 +84,10 @@ public class Engine implements intEngine {
 
 	@Override
 	public int calculateCost(int[] x) {
-		int strung = 0;
-		int unstrung = 1;
-		int astral = 2;
+
 		
-		int diff = x[unstrung] - x[strung];
-		int runes = x[astral];
+		int diff = x[UNSTRUNG] - x[STRUNG];
+		int runes = x[ASTRAL];
 		
 		return diff + runes;
 	}
@@ -131,14 +129,16 @@ public class Engine implements intEngine {
 	public String computeResults() {
 		int mExp = 0;
 		int cExp = 1;
+		int cost = 2;
 		int res[] = new int[3];
 		
 		//get magic exp for all casts
-		res[0] = computeExp(getValues())[mExp];
+		res[mExp] = computeExp(getValues())[mExp];
 		//get craft exp for all casts
-		res[1] = computeExp(getValues())[cExp];
+		res[cExp] = computeExp(getValues())[cExp];
 		//get cost for all casts
-		res[2] = calculateCost(getValues());
+		res[cost] = calculateCost(getValues());
+		
 		//get ratio
 		double ratio = costPerExp(res);
 		
