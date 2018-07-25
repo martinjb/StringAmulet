@@ -1,0 +1,5 @@
+OSRS JSON REQUESTS 
+
+http://services.runescape.com/m=itemdb_oldschool/api/catalogue/items.json?category=1&alpha=gold%20amulet%20(u)&page=1
+
+https://stackoverflow.com/questions/2591098/how-to-parse-json-in-java
