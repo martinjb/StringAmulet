@@ -169,7 +169,9 @@ public class Engine implements intEngine {
 			setplayerMagicExp((int)playerMagicExp);
 			setplayerMagicLvl(lvlFromExp((int)playerMagicExp));	
 		}
-		return expFromLevel(getplayerMagicLvl() + 1) - getplayerMagicExp();		
+		int res = expFromLevel(getplayerMagicLvl() + 1) - getplayerMagicExp();
+		setPlannedCasts(res/MAGIC_EXP);
+		return res;		
 	}
 
 	/**
