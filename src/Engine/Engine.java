@@ -12,6 +12,8 @@ public class Engine implements intEngine {
 	
 	public static final int CRAFT_EXP = 4;
 	public static final int MAGIC_EXP = 83;
+	public static final String OSRS_GE_API = "http://services.runescape.com/m=itemdb_oldschool/api/catalogue/items.json?category=1&alpha=";
+	public static final String OSRS_HISCORES_URL = "https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player=";
 	
 	private int strung;
 	private int unStrung;
@@ -111,57 +113,38 @@ public class Engine implements intEngine {
 		//int inputPlayerMagicExp = 83;
 		//populatePlayerInfo();
 		//populateCosts();
-		getAstral();
-		getStrung();
-		getUnStrung();
 		//setPlannedCasts(inputPlannedCasts);
-		//setplayerMagicLvl(inputPlayerMagicLevel);
+		setplayerMagicLvl(44);
 		//setplayerMagicExp(inputPlayerMagicExp);
 		setValues(resultValues);
 	}
 
 	private void populatePlayerInfo(String playerName) throws Exception {
-		 // build a URL
-	    String s = "https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player=";
+
+	    String s = OSRS_HISCORES_URL;
 	    s += URLEncoder.encode(playerName, "UTF-8");
 	    URL url = new URL(s);
-	 
-	    // read from the URL
 	    Scanner scan = new Scanner(url.openStream());
 	    String str = new String();
 	    while (scan.hasNext())
 	        str += scan.nextLine();
 	    scan.close();
+	    //setplayerMagicExp(83);
 	    System.out.println(str);
 	}
 
-	private void populateCosts(String item) throws Exception {
-		 // build a URL
-	    String s = "http://services.runescape.com/m=itemdb_oldschool/api/catalogue/items.json?category=1&alpha=";
+	private int populateCost(String item) throws Exception {
+	    String s = OSRS_GE_API;
 	    s += URLEncoder.encode(item, "UTF-8");
 	    URL url = new URL(s);
-    	// System.out.println(url.toString());
-	    // read from the URL
 	    Scanner scan = new Scanner(url.openStream());
 	    String str = new String();
 	    while (scan.hasNext())
 	    	str += scan.nextLine();
 	    scan.close();
-	 
-	    // build a JSON object
 	    JSONObject obj = new JSONObject(str);
-	    
-	    /**if (! obj.getString("status").equals("OK"))
-	    {
-			System.out.println("json not ok");
-	        return;
-	    }**/
-	    
-	    // get the first result
 	    int price = obj.getJSONArray("items").getJSONObject(0).getJSONObject("current").getInt("price");
-		System.out.println(price);
-	    //System.out.println(res.getString("price"));
-	    //JSONObject price = res.getJSONObject("current").getJSONObject("price");
+	    return price; 
 	}
 
 	/**
@@ -192,8 +175,8 @@ public class Engine implements intEngine {
 	/**
 	 * The experience for each level is determined by the formula:
 	 * 
-	 * 	sum from 1 to level of:
-	 *  level + 300 * 2 ^ (level/7)
+	 * 	sum from 2 to level of:
+	 *  (level - 1) + 300 * 2 ^ ((level-1)/7))
 	 * 	divided by 4 and rounded down.
 	 * 
 	 * 
@@ -201,21 +184,22 @@ public class Engine implements intEngine {
 	public int expFromLevel(int level) {
 			int exp = expFormula(level, 0);
 			exp = (int) Math.floor(exp)/4;
+			System.out.println("\n" + exp);
 			setplayerMagicExp(exp);
 			return exp;
 	}
 	/**
 	 * This is a helper method for expFromLevel()
-	 * Recursively calculates Sigma [1 to x] of [x + 300 * 2 ^ (x/7)]
+	 * Recursively calculates Sigma [2 to x] of [(x-1) + 300 * 2 ^ ((x-1)/7)]
 	 * @param level How many recursive calls.
 	 * @param sum Used to contain result.
 	 * @return Top half of experience formula
 	 */
 	private int expFormula(int level, int sum) {
-	    if (level==0) {
+	    if (level==1) {
 	    	return sum;
 	    }
-		sum += (int) Math.floor((level + 300 * Math.pow(2, (float)(level)/7)));
+		sum += (int) Math.floor((level - 1) + 300 * Math.pow(2, (float)(level-1)/7));
 		return expFormula(level - 1, sum);
 	}
 	
@@ -249,29 +233,29 @@ public class Engine implements intEngine {
 
 	public int computeCost() {	
 		int costPerCast = getUnStrung() - getStrung() + getAstral();
-		return costPerCast * getPlannedCasts();
+		return 1;
+		//return costPerCast * getPlannedCasts();
 	}
 	
 	/* 
-	 * result value array the should report,
+	 * ---Result array should report---
 	 * 0 - The number of casts to the next magic level.
 	 * 1 - Total cost to next magic level.
 	 * 2 - Total cost for planned number of casts.
 	 * 3 - Magic experience gained from planned casts.
 	 * 4 - Crafting experience gained from planned casts.
 	 * 5 - Cost / Experience Ratio
-	 * 6 - 
+	 * 6 - Buffer
 	 */
 	public String computeResults() {
-		int mExp = 0;
-		int cExp = 1;
-		int cost = 2;
-		int res[] = new int[3];
-		
+		int res[] = new int[6];
 		computeExp();
 		computeCost();
 		try {
-			populateCosts("gold amulet (u)");
+			populatePlayerInfo("Trades 5 gp");
+			setAstral(populateCost("gold amulet (u)"));
+			setStrung(populateCost("gold amulet"));
+			setUnStrung(populateCost("astral rune"));
 		}
 		catch(Exception e)
 		{
