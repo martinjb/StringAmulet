@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JWindow;        
 
-public class AmuletGUI implements intAmuletGUI {
+public class AmuletGUI {
 	    private static void createAndShowGUI() {
 	        //Create and set up the window.
 	    	float x = 0.0f;
@@ -111,5 +111,34 @@ public class AmuletGUI implements intAmuletGUI {
 	            }
 	        });
 	    }
+
+		public void createFrame() {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+		public void handleListeners() {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+		public void createPricePanel() {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+		public void createResultPanel() {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+		public void show() {
+			// TODO Auto-generated method stub
+			
+		}
 
 }

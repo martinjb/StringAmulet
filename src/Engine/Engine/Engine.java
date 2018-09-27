@@ -1,13 +1,5 @@
 package Engine;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.Scanner;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 public class Engine implements intEngine {
 	
 	public static final int CRAFT_EXP = 4;
@@ -43,8 +35,20 @@ public class Engine implements intEngine {
 		this.strung = strung;
 	}
 
+	public int getUnStrung() {
+		return unStrung;
+	}
+
 	public void setUnStrung(int unStrung) {
 		this.unStrung = unStrung;
+	}
+
+	public int getStrung() {
+		return strung;
+	}
+
+	public int getAstral() {
+		return astral;
 	}
 
 	public void setAstral(int astral) {
@@ -74,17 +78,6 @@ public class Engine implements intEngine {
 	public void setValues(int[] values) {
 		this.values = values;
 	}
-	
-	public int getAstral() {
-		return astral;
-	}
-	public int getUnStrung() {
-		return unStrung;
-	}	
-	public int getStrung() {
-		return strung;
-	}
-	
 	public static void main(String[] args) {
 		Engine engine = new Engine();
 		System.out.println(engine.computeResults());
@@ -101,76 +94,26 @@ public class Engine implements intEngine {
 	 * 3 - Magic experience gained from planned casts.
 	 * 4 - Crafting experience gained from planned casts.
 	 * 5 - Cost / Experience Ratio
-	 * 6 - 
 	 */
 
 	public Engine() {
-		int resultValues[] = new int[5];	
-		//int inputPlannedCasts = 27;
-		//int inputPlayerMagicLevel = 1;
-		//int inputPlayerMagicExp = 83;
-		//populatePlayerInfo();
-		//populateCosts();
-		getAstral();
-		getStrung();
-		getUnStrung();
-		//setPlannedCasts(inputPlannedCasts);
-		//setplayerMagicLvl(inputPlayerMagicLevel);
-		//setplayerMagicExp(inputPlayerMagicExp);
+		int resultValues[] = new int[5];		
+		setStrung(90);
+		setUnStrung(130);
+		setAstral(200);
+		setPlannedCasts(27);
+		setplayerMagicLvl(1);
 		setValues(resultValues);
 	}
-
-	private void populatePlayerInfo(String playerName) throws Exception {
-		 // build a URL
-	    String s = "https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player=";
-	    s += URLEncoder.encode(playerName, "UTF-8");
-	    URL url = new URL(s);
-	 
-	    // read from the URL
-	    Scanner scan = new Scanner(url.openStream());
-	    String str = new String();
-	    while (scan.hasNext())
-	        str += scan.nextLine();
-	    scan.close();
-	    System.out.println(str);
-	}
-
-	private void populateCosts(String item) throws Exception {
-		 // build a URL
-	    String s = "http://services.runescape.com/m=itemdb_oldschool/api/catalogue/items.json?category=1&alpha=";
-	    s += URLEncoder.encode(item, "UTF-8");
-	    URL url = new URL(s);
-    	// System.out.println(url.toString());
-	    // read from the URL
-	    Scanner scan = new Scanner(url.openStream());
-	    String str = new String();
-	    while (scan.hasNext())
-	    	str += scan.nextLine();
-	    scan.close();
-	 
-	    // build a JSON object
-	    JSONObject obj = new JSONObject(str);
-	    
-	    /**if (! obj.getString("status").equals("OK"))
-	    {
-			System.out.println("json not ok");
-	        return;
-	    }**/
-	    
-	    // get the first result
-	    int price = obj.getJSONArray("items").getJSONObject(0).getJSONObject("current").getInt("price");
-		System.out.println(price);
-	    //System.out.println(res.getString("price"));
-	    //JSONObject price = res.getJSONObject("current").getJSONObject("price");
-	}
-
+	
 	/**
+	 * 
 	 * @param playerMagicLvl current magic lvl
 	 * @param playerMagicExp or current magic exp
 	 * @return 
 	 * @throws Exception user entered no values
 	 */
-	public int expToNextLvl() throws Exception {
+	public int nextLevel() throws Exception {
 		if(getplayerMagicExp() == 0)
 		{
 			if(getplayerMagicLvl() != 0)
@@ -188,37 +131,6 @@ public class Engine implements intEngine {
 		}
 		return expFromLevel(getplayerMagicLvl() + 1) - getplayerMagicExp();		
 	}
-
-	/**
-	 * The experience for each level is determined by the formula:
-	 * 
-	 * 	sum from 1 to level of:
-	 *  level + 300 * 2 ^ (level/7)
-	 * 	divided by 4 and rounded down.
-	 * 
-	 * 
-	 */
-	public int expFromLevel(int level) {
-			int exp = expFormula(level, 0);
-			exp = (int) Math.floor(exp)/4;
-			setplayerMagicExp(exp);
-			return exp;
-	}
-	/**
-	 * This is a helper method for expFromLevel()
-	 * Recursively calculates Sigma [1 to x] of [x + 300 * 2 ^ (x/7)]
-	 * @param level How many recursive calls.
-	 * @param sum Used to contain result.
-	 * @return Top half of experience formula
-	 */
-	private int expFormula(int level, int sum) {
-	    if (level==0) {
-	    	return sum;
-	    }
-		sum += (int) Math.floor((level + 300 * Math.pow(2, (float)(level)/7)));
-		return expFormula(level - 1, sum);
-	}
-	
 	/*
 	 * https://www.reddit.com/r/2007scape/comments/3idn2b/exp_to_lvl_formula/ 
 	 */
@@ -231,14 +143,40 @@ public class Engine implements intEngine {
         setplayerMagicLvl(index);
         return index;
 	}
+	/**
+	 * The experience for each level is determined by the formula:
+	 * 
+	 * 	sum from 1 to level of:
+	 *  level + 300 * 2 ^ (level/7)
+	 * 	divided by 4 and rounded down.
+	 *  
+	 *  
+	 *  
+	 */
+	public int expFromLevel(int level) {
+			int exp = expFormula(level, 0);
+			exp = (int) Math.floor(exp)/4;
+			System.out.println("u" + exp);
+			setplayerMagicExp(exp);
+			return exp;
+	}
 	
+	private int expFormula(int level, int sum) {
+	    if (level==0) {
+	    	return sum;
+	    }
+		sum += (int) Math.floor((level + 300 * Math.pow(2, (float)(level)/7)));
+		System.out.println(sum);
+		return expFormula(level - 1, sum);
+	}
 	
+	@Override
 	public double costPerExp() {
 		double expRate = ((computeExp()[0] + computeExp()[1]) / computeCost()) * 100;	
 		return expRate;
 	}
 
-
+	@Override
 	public int[] computeExp() {
 		int[] z = new int[2];
 		z[0] = MAGIC_EXP * getPlannedCasts();
@@ -246,22 +184,13 @@ public class Engine implements intEngine {
 		return z;
 	}
 	
-
+	@Override
 	public int computeCost() {	
 		int costPerCast = getUnStrung() - getStrung() + getAstral();
 		return costPerCast * getPlannedCasts();
 	}
 	
-	/* 
-	 * result value array the should report,
-	 * 0 - The number of casts to the next magic level.
-	 * 1 - Total cost to next magic level.
-	 * 2 - Total cost for planned number of casts.
-	 * 3 - Magic experience gained from planned casts.
-	 * 4 - Crafting experience gained from planned casts.
-	 * 5 - Cost / Experience Ratio
-	 * 6 - 
-	 */
+	@Override
 	public String computeResults() {
 		int mExp = 0;
 		int cExp = 1;
@@ -270,28 +199,17 @@ public class Engine implements intEngine {
 		
 		computeExp();
 		computeCost();
-		try {
-			populateCosts("gold amulet (u)");
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
+		
 		double ratio = costPerExp();
 		double nLvl = 5;
 		
 		try {
-		 nLvl = expToNextLvl();
+		 nLvl = nextLevel();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		StringBuilder sb = new StringBuilder(1024);
-				sb.append("Currently ");
-				sb.append("level " + getplayerMagicLvl()); sb.append(" with " + getplayerMagicExp() + " experience \n");
-				sb.append("Level " + (getplayerMagicLvl() + 1) + " in " + getPlannedCasts() + " casts or "+ (int)nLvl + " experience \n");
-				sb.append("Cost per: " + res[2] + "\n"); 
-				sb.append("Ratio of experience to GP: " + ratio + "\n");
-		return  sb.toString();
+		//StringBuilder
+		return "exp: " + getplayerMagicExp() + "lvl: " + getplayerMagicLvl() + "exp to lvl" + nLvl + " Casts:" + getPlannedCasts() + "Cost Per:" + res[2] + "Magic Exp:" + res[0] + "Ratio:" + ratio + "\n";
 	}
 	
 	
