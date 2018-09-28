@@ -1,8 +1,6 @@
 Engine\Engine.class
 Engine\Refresh.class
-GUI\AmuletGUI.class
-GUI\intAmuletGUI.class
 GUI\AmuletGUI$1.class
-start\HelloWorldSwing.class
+GUI\AmuletGUI.class
 Engine\intEngine.class
-start\HelloWorldSwing$1.class
+GUI\intAmuletGUI.class
