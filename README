@@ -5,5 +5,4 @@
     An estimated amount of time until next level.
     The total cost and experience for a given amount of casts and the ratio gp/exp.
   
-  Prices for Astral Runes, Gold Amulet (u) and Gold Amulet can be entered manually 
-    or request from Runescape API or OSRSWikia API
+  Prices for Astral Runes, Gold Amulet (u) and Gold Amulet from Runescape GE API
