@@ -21,8 +21,12 @@
   </build>
   <repositories>
     <repository>
-      <id>mvnrepository</id>
+      <id>json</id>
       <url>https://mvnrepository.com/artifact/org.json/json</url>
+    </repository> 
+    <repository>
+      <id>apacheddlutils</id>
+      <url>https://mvnrepository.com/artifact/org.apache.ddlutils/ddlutils</url>
     </repository>
   </repositories>
   <dependencies>
@@ -31,5 +35,10 @@
     	<artifactId>json</artifactId>
     	<version>20180813</version>
   	</dependency>
+  	<dependency>
+    <groupId>org.apache.ddlutils</groupId>
+    <artifactId>ddlutils</artifactId>
+    <version>1.0</version>
+</dependency>
   </dependencies>
 </project>

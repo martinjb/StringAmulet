@@ -1,6 +1,8 @@
 Engine\Engine.class
 Engine\Refresh.class
-GUI\AmuletGUI$1.class
 GUI\AmuletGUI.class
-Engine\intEngine.class
 GUI\intAmuletGUI.class
+GUI\AmuletGUI$1.class
+Engine\SpellDB.class
+Engine\intEngine.class
+Engine\SpellGet.class
